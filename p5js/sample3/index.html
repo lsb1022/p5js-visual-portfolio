@@ -10,224 +10,194 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: #1a1a18;
+      background: #a8c0c5;
       font-family: 'Pretendard', sans-serif;
       display: flex;
+      justify-content: center;
+      align-items: center;
       height: 100vh;
       overflow: hidden;
     }
 
-    /* ── 캔버스 영역 ── */
-    #canvas-wrap {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 0;
-    }
+    canvas { display: block; }
 
-    #canvas-wrap canvas {
-      display: block;
-      max-width: 100%;
-      max-height: 100vh;
-      width: auto !important;
-      height: auto !important;
-    }
-
-    /* ── 사이드 패널 ── */
-    #panel {
-      width: 230px;
-      flex-shrink: 0;
-      background: #111110;
-      border-left: 1px solid rgba(255,255,255,0.07);
+    /* ── 플로팅 가이드 패널 ── */
+    #guide {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 200px;
+      background: rgba(17, 17, 16, 0.88);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 14px 14px 12px;
       display: flex;
       flex-direction: column;
-      padding: 28px 20px 24px;
-      overflow-y: auto;
-      gap: 20px;
+      gap: 10px;
+      z-index: 999;
     }
 
-    .panel-title {
-      font-size: 0.62rem;
+    #guide-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(17,17,16,0.82);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 8px;
+      color: rgba(255,255,255,0.7);
+      font-family: 'Pretendard', sans-serif;
+      font-size: 0.65rem;
       font-weight: 500;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.35);
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-      padding-bottom: 10px;
+      letter-spacing: 0.1em;
+      padding: 6px 12px;
+      cursor: pointer;
+      z-index: 1000;
+      display: none; /* 처음엔 숨김 — 패널이 열려있으므로 */
     }
 
-    .key-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .key-group-label {
+    .guide-title {
       font-size: 0.58rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .guide-close {
+      cursor: pointer;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.25);
+      line-height: 1;
+      user-select: none;
+    }
+    .guide-close:hover { color: rgba(255,255,255,0.6); }
+
+    .g-section { display: flex; flex-direction: column; gap: 5px; }
+
+    .g-label {
+      font-size: 0.55rem;
       font-weight: 400;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.22);
-      margin-bottom: 2px;
+      color: rgba(255,255,255,0.2);
     }
 
-    .key-row {
+    .g-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 7px;
     }
 
     kbd {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-width: 28px;
-      height: 24px;
-      padding: 0 6px;
+      min-width: 22px;
+      height: 20px;
+      padding: 0 5px;
       background: #2a2a28;
-      border: 1px solid rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.1);
       border-bottom: 2px solid rgba(0,0,0,0.4);
-      border-radius: 4px;
+      border-radius: 3px;
       font-family: 'Pretendard', monospace;
-      font-size: 0.65rem;
+      font-size: 0.6rem;
       font-weight: 600;
-      color: rgba(255,255,255,0.75);
+      color: rgba(255,255,255,0.7);
       flex-shrink: 0;
     }
 
-    .key-desc {
-      font-size: 0.68rem;
+    .g-desc {
+      font-size: 0.62rem;
       font-weight: 300;
-      color: rgba(255,255,255,0.5);
-      line-height: 1.35;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.3;
     }
 
-    .key-row .color-dot {
-      width: 8px;
-      height: 8px;
+    .dot {
+      width: 7px; height: 7px;
       border-radius: 50%;
       flex-shrink: 0;
     }
 
-    .divider {
+    .g-divider {
       height: 1px;
       background: rgba(255,255,255,0.06);
-    }
-
-    .mouse-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .mouse-icon {
-      font-size: 1rem;
-      flex-shrink: 0;
-      line-height: 1;
-      margin-top: 1px;
-    }
-
-    .panel-footer {
-      margin-top: auto;
-      font-size: 0.58rem;
-      font-weight: 300;
-      color: rgba(255,255,255,0.18);
-      line-height: 1.5;
     }
   </style>
 </head>
 <body>
 
-  <div id="canvas-wrap"></div>
-
-  <aside id="panel">
-    <p class="panel-title">상호작용 가이드</p>
-
-    <!-- 마우스 -->
-    <div class="key-group">
-      <p class="key-group-label">마우스</p>
-      <div class="mouse-row">
-        <span class="mouse-icon">🖱️</span>
-        <span class="key-desc">눈 위 클릭 시<br>눈동자 마우스 추적 ON/OFF</span>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- 셔츠 색상 -->
-    <div class="key-group">
-      <p class="key-group-label">셔츠 색상</p>
-      <div class="key-row">
-        <kbd>R</kbd>
-        <span class="color-dot" style="background:#dc1e1e"></span>
-        <span class="key-desc">빨간색</span>
-      </div>
-      <div class="key-row">
-        <kbd>G</kbd>
-        <span class="color-dot" style="background:#1eb41e"></span>
-        <span class="key-desc">초록색</span>
-      </div>
-      <div class="key-row">
-        <kbd>B</kbd>
-        <span class="color-dot" style="background:#1e1edc"></span>
-        <span class="key-desc">파란색</span>
-      </div>
-      <div class="key-row">
-        <kbd>D</kbd>
-        <span class="color-dot" style="background:#232d3f"></span>
-        <span class="key-desc">기본 (네이비)</span>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- 표정 / 액세서리 -->
-    <div class="key-group">
-      <p class="key-group-label">표정 · 액세서리</p>
-      <div class="key-row">
-        <kbd>S</kbd>
-        <span class="key-desc">웃는 표정 ON/OFF</span>
-      </div>
-      <div class="key-row">
-        <kbd>H</kbd>
-        <span class="key-desc">모자 ON/OFF</span>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- 배경 / 시간대 -->
-    <div class="key-group">
-      <p class="key-group-label">배경 시간대</p>
-      <div class="key-row">
-        <kbd>T</kbd>
-        <span class="key-desc">낮 → 저녁 → 밤<br>순으로 전환</span>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- 베놈 -->
-    <div class="key-group">
-      <p class="key-group-label">특수 효과</p>
-      <div class="key-row">
-        <kbd>V</kbd>
-        <span class="key-desc">Venom 잠식 ON/OFF<br><span style="color:rgba(255,255,255,0.28);font-size:0.62rem">캐릭터가 점차 베놈에 잠식됨</span></span>
-      </div>
-      <div class="key-row">
-        <kbd>L</kbd>
-        <span class="key-desc">GIF 저장 (10초)</span>
-      </div>
-    </div>
-
-    <p class="panel-footer">
-      키를 누르면 즉시 반응합니다.<br>
-      Venom 모드 중 눈 클릭은<br>잠식도 30% 미만일 때만 동작합니다.
-    </p>
-  </aside>
-
   <script src="sketch.js"></script>
+
+  <!-- 플로팅 가이드 -->
+  <div id="guide">
+    <div class="guide-title">
+      상호작용 가이드
+      <span class="guide-close" onclick="closeGuide()">✕</span>
+    </div>
+
+    <div class="g-section">
+      <div class="g-label">마우스</div>
+      <div class="g-row">
+        <span style="font-size:0.9rem">🖱️</span>
+        <span class="g-desc">눈 클릭 → 눈동자 추적 ON/OFF</span>
+      </div>
+    </div>
+
+    <div class="g-divider"></div>
+
+    <div class="g-section">
+      <div class="g-label">셔츠 색상</div>
+      <div class="g-row"><kbd>R</kbd><span class="dot" style="background:#dc1e1e"></span><span class="g-desc">빨간색</span></div>
+      <div class="g-row"><kbd>G</kbd><span class="dot" style="background:#1eb41e"></span><span class="g-desc">초록색</span></div>
+      <div class="g-row"><kbd>B</kbd><span class="dot" style="background:#1e1edc"></span><span class="g-desc">파란색</span></div>
+      <div class="g-row"><kbd>D</kbd><span class="dot" style="background:#232d3f"></span><span class="g-desc">기본 (네이비)</span></div>
+    </div>
+
+    <div class="g-divider"></div>
+
+    <div class="g-section">
+      <div class="g-label">표정 · 액세서리</div>
+      <div class="g-row"><kbd>S</kbd><span class="g-desc">웃는 표정 ON/OFF</span></div>
+      <div class="g-row"><kbd>H</kbd><span class="g-desc">모자 ON/OFF</span></div>
+    </div>
+
+    <div class="g-divider"></div>
+
+    <div class="g-section">
+      <div class="g-label">배경 시간대</div>
+      <div class="g-row"><kbd>T</kbd><span class="g-desc">낮 → 저녁 → 밤</span></div>
+    </div>
+
+    <div class="g-divider"></div>
+
+    <div class="g-section">
+      <div class="g-label">특수 효과</div>
+      <div class="g-row"><kbd>V</kbd><span class="g-desc">Venom 잠식 ON/OFF</span></div>
+      <div class="g-row"><kbd>L</kbd><span class="g-desc">GIF 저장 (10초)</span></div>
+    </div>
+  </div>
+
+  <!-- 패널 닫힌 후 다시 열기 버튼 -->
+  <button id="guide-toggle" onclick="openGuide()">가이드 ▲</button>
+
+  <script>
+    function closeGuide() {
+      document.getElementById('guide').style.display = 'none';
+      document.getElementById('guide-toggle').style.display = 'block';
+    }
+    function openGuide() {
+      document.getElementById('guide').style.display = 'flex';
+      document.getElementById('guide-toggle').style.display = 'none';
+    }
+  </script>
 
 </body>
 </html>

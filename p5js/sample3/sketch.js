@@ -4,30 +4,18 @@ let smileMode = false;
 let hatMode = false;
 let timeOfDay = 0; 
 let venomMode = false;
-let venomProgress = 0;
-let S = 1; // 전체 스케일 팩터
-
+let venomProgress = 0; 
 function setup() {
-  let wrap = document.getElementById('canvas-wrap');
-  let w = wrap.clientWidth || 600;
-  let h = wrap.clientHeight || 400;
-  S = min(w / 600, h / 400);
-  let cnv = createCanvas(round(600 * S), round(400 * S));
-  cnv.parent('canvas-wrap');
+  createCanvas(600, 400);
   shirtColor = color(35, 45, 63);
 }
-
 function draw() {
   if (timeOfDay === 0) background('#a8c0c5');
   else if (timeOfDay === 1) background('#f08030');
   else background('#102040');
-
-  // 전체 스케일 적용 후 기존 좌표계 사용
-  scale(S);
   translate(300, 200); 
   scale(0.55); 
   translate(-384, -380); 
-
   let showCharacter = (!venomMode || venomProgress <= 95);
   if (showCharacter) {
     strokeWeight(5);
@@ -58,8 +46,8 @@ function draw() {
       fill(255); noStroke(); ellipse(lx, ey, 25, 30); ellipse(rx, ey, 25, 30);
       fill(0);
       if (eyeFollowMode) {
-        let dx = constrain((mouseX / S - 300) / (0.55 * 15), -8, 8);
-        let dy = constrain((mouseY / S - 200) / (0.55 * 15), -8, 8);
+        let dx = constrain((mouseX - width/2) / 15, -8, 8);
+        let dy = constrain((mouseY - height/2) / 15, -8, 8);
         ellipse(lx + dx, ey + dy, 17, 20); ellipse(rx + dx, ey + dy, 17, 20);
       } else {
         ellipse(lx, ey, 17, 20); ellipse(rx, ey, 17, 20);
@@ -103,10 +91,8 @@ function draw() {
       arc(384, 250, 180, 130, PI+0.2, TWO_PI-0.2);
     }
   }
-
   if (venomMode) { if (venomProgress < 100) venomProgress += 1.5; } 
   else { if (venomProgress > 0) venomProgress -= 5; }
-
   if (venomProgress > 0) {
     let alpha = map(venomProgress, 0, 100, 50, 255);
     if (!venomMode) alpha = map(venomProgress, 0, 100, 50, 230);
@@ -137,25 +123,19 @@ function draw() {
     }
   }
 }
-
 function drawCurved(pts, isClosed) {
   beginShape();
   for (let p of pts) curveVertex(p[0], p[1]);
   isClosed ? endShape(CLOSE) : endShape();
 }
-
 function mousePressed() {
   if (venomMode && venomProgress >= 30) return;
-  // 스케일 역보정 후 원본 좌표계로 변환
-  let mx = mouseX / S;
-  let my = mouseY / S;
-  let mapX = (mx - 300) / 0.55 + 384;
-  let mapY = (my - 200) / 0.55 + 380;
-  let dLeft  = dist(mapX, mapY, 329, 399);
+  let mapX = (mouseX - width / 2) / 0.55 + 384;
+  let mapY = (mouseY - height / 2) / 0.55 + 380;
+  let dLeft = dist(mapX, mapY, 329, 399);
   let dRight = dist(mapX, mapY, 439, 399);
   if (dLeft < 20 || dRight < 20) eyeFollowMode = !eyeFollowMode;
 }
-
 function keyPressed() {
   if (key === 'r' || key === 'R') shirtColor = color(220, 30, 30);
   else if (key === 'g' || key === 'G') shirtColor = color(30, 180, 30);
