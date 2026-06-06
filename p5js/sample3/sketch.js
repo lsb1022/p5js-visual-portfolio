@@ -6,7 +6,8 @@ let timeOfDay = 0;
 let venomMode = false;
 let venomProgress = 0; 
 function setup() {
-  createCanvas(600, 400);
+  let cnv = createCanvas(600, 400);
+  cnv.parent('canvas-wrap');;
   shirtColor = color(35, 45, 63);
 }
 function draw() {
