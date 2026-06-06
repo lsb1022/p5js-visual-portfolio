@@ -4,19 +4,30 @@ let smileMode = false;
 let hatMode = false;
 let timeOfDay = 0; 
 let venomMode = false;
-let venomProgress = 0; 
+let venomProgress = 0;
+let S = 1; // 전체 스케일 팩터
+
 function setup() {
-  let cnv = createCanvas(600, 400);
-  cnv.parent('canvas-wrap');;
+  let wrap = document.getElementById('canvas-wrap');
+  let w = wrap.clientWidth || 600;
+  let h = wrap.clientHeight || 400;
+  S = min(w / 600, h / 400);
+  let cnv = createCanvas(round(600 * S), round(400 * S));
+  cnv.parent('canvas-wrap');
   shirtColor = color(35, 45, 63);
 }
+
 function draw() {
   if (timeOfDay === 0) background('#a8c0c5');
   else if (timeOfDay === 1) background('#f08030');
   else background('#102040');
+
+  // 전체 스케일 적용 후 기존 좌표계 사용
+  scale(S);
   translate(300, 200); 
   scale(0.55); 
   translate(-384, -380); 
+
   let showCharacter = (!venomMode || venomProgress <= 95);
   if (showCharacter) {
     strokeWeight(5);
@@ -47,8 +58,8 @@ function draw() {
       fill(255); noStroke(); ellipse(lx, ey, 25, 30); ellipse(rx, ey, 25, 30);
       fill(0);
       if (eyeFollowMode) {
-        let dx = constrain((mouseX - width/2) / 15, -8, 8);
-        let dy = constrain((mouseY - height/2) / 15, -8, 8);
+        let dx = constrain((mouseX / S - 300) / (0.55 * 15), -8, 8);
+        let dy = constrain((mouseY / S - 200) / (0.55 * 15), -8, 8);
         ellipse(lx + dx, ey + dy, 17, 20); ellipse(rx + dx, ey + dy, 17, 20);
       } else {
         ellipse(lx, ey, 17, 20); ellipse(rx, ey, 17, 20);
@@ -58,7 +69,7 @@ function draw() {
       beginShape(); vertex(422, 395); bezierVertex(429, 375, 451, 380, 458, 395); endShape();
       fill(30, 20, 10); noStroke();
       beginShape(); vertex(296, 362); bezierVertex(299, 345, 329, 347, 359, 357); vertex(354, 356); bezierVertex(344, 369, 319, 356, 299, 363); endShape(CLOSE);
-      beginShape(); vertex(472, 362); bezierVertex(469, 345, 439, 347, 409, 357); vertex(414, 356); bezierVertex(424, 369, 449, 356, 469, 363); endShape(CLOSE);
+      beginShape(); vertex(472, 362); bezierVertex(469, 345, 439, 347, 409, 357); vertex(414, 356); bezierVertex(424, 169, 449, 356, 469, 363); endShape(CLOSE);
     }
     fill(255, 219, 172); stroke(0); strokeWeight(5);
     beginShape(); vertex(260, 400); bezierVertex(251, 330, 197, 433, 273, 457); endShape(CLOSE);
@@ -92,8 +103,10 @@ function draw() {
       arc(384, 250, 180, 130, PI+0.2, TWO_PI-0.2);
     }
   }
+
   if (venomMode) { if (venomProgress < 100) venomProgress += 1.5; } 
   else { if (venomProgress > 0) venomProgress -= 5; }
+
   if (venomProgress > 0) {
     let alpha = map(venomProgress, 0, 100, 50, 255);
     if (!venomMode) alpha = map(venomProgress, 0, 100, 50, 230);
@@ -120,23 +133,29 @@ function draw() {
       fill('#6d3038'); noStroke();
       drawCurved([[284,433],[305,446],[321,451],[338,452],[361,449],[378,448],[397,449],[424,453],[446,449],[463,441],[476,432],[479,441],[479,452],[476,467],[467,484],[460,495],[446,507],[429,519],[412,526],[396,530],[385,533],[365,530],[346,525],[327,517],[315,508],[302,497],[293,485],[287,470],[283,459],[283,441],[285,433],[286,432],[297,441],[313,448]], false);
       strokeWeight(3); stroke('#2e2e2e'); fill('#2e2e2e');
-      line(345,339,371,361); line(371,361,372,350); line(390,352, 389,361); line(389, 361, 416,339);
+      line(345,339,371,361); line(371,361,372,350); line(390,352,389,361); line(389,361,416,339);
     }
   }
 }
+
 function drawCurved(pts, isClosed) {
   beginShape();
   for (let p of pts) curveVertex(p[0], p[1]);
   isClosed ? endShape(CLOSE) : endShape();
 }
+
 function mousePressed() {
   if (venomMode && venomProgress >= 30) return;
-  let mapX = (mouseX - width / 2) / 0.55 + 384;
-  let mapY = (mouseY - height / 2) / 0.55 + 380;
-  let dLeft = dist(mapX, mapY, 329, 399);
+  // 스케일 역보정 후 원본 좌표계로 변환
+  let mx = mouseX / S;
+  let my = mouseY / S;
+  let mapX = (mx - 300) / 0.55 + 384;
+  let mapY = (my - 200) / 0.55 + 380;
+  let dLeft  = dist(mapX, mapY, 329, 399);
   let dRight = dist(mapX, mapY, 439, 399);
-  if (dLeft < 20 || dRight < 20) { eyeFollowMode = !eyeFollowMode; }
+  if (dLeft < 20 || dRight < 20) eyeFollowMode = !eyeFollowMode;
 }
+
 function keyPressed() {
   if (key === 'r' || key === 'R') shirtColor = color(220, 30, 30);
   else if (key === 'g' || key === 'G') shirtColor = color(30, 180, 30);
