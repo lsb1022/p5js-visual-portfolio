@@ -3,15 +3,229 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>과제 3 — 캐리커처 인터랙티브</title>
+  <title>과제 3 — 인터렉션 캐리커쳐</title>
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #a8c0c5; display: flex; justify-content: center; align-items: center; height: 100vh; }
-    canvas { display: block; }
+
+    body {
+      background: #1a1a18;
+      font-family: 'Pretendard', sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── 캔버스 영역 ── */
+    #canvas-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    #canvas-wrap canvas {
+      display: block;
+      max-width: 100%;
+      max-height: 100vh;
+    }
+
+    /* ── 사이드 패널 ── */
+    #panel {
+      width: 230px;
+      flex-shrink: 0;
+      background: #111110;
+      border-left: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 20px 24px;
+      overflow-y: auto;
+      gap: 20px;
+    }
+
+    .panel-title {
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding-bottom: 10px;
+    }
+
+    .key-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .key-group-label {
+      font-size: 0.58rem;
+      font-weight: 400;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.22);
+      margin-bottom: 2px;
+    }
+
+    .key-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 28px;
+      height: 24px;
+      padding: 0 6px;
+      background: #2a2a28;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-bottom: 2px solid rgba(0,0,0,0.4);
+      border-radius: 4px;
+      font-family: 'Pretendard', monospace;
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.75);
+      flex-shrink: 0;
+    }
+
+    .key-desc {
+      font-size: 0.68rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.35;
+    }
+
+    .key-row .color-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .divider {
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .mouse-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .mouse-icon {
+      font-size: 1rem;
+      flex-shrink: 0;
+      line-height: 1;
+      margin-top: 1px;
+    }
+
+    .panel-footer {
+      margin-top: auto;
+      font-size: 0.58rem;
+      font-weight: 300;
+      color: rgba(255,255,255,0.18);
+      line-height: 1.5;
+    }
   </style>
 </head>
 <body>
+
+  <div id="canvas-wrap"></div>
+
+  <aside id="panel">
+    <p class="panel-title">상호작용 가이드</p>
+
+    <!-- 마우스 -->
+    <div class="key-group">
+      <p class="key-group-label">마우스</p>
+      <div class="mouse-row">
+        <span class="mouse-icon">🖱️</span>
+        <span class="key-desc">눈 위 클릭 시<br>눈동자 마우스 추적 ON/OFF</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 셔츠 색상 -->
+    <div class="key-group">
+      <p class="key-group-label">셔츠 색상</p>
+      <div class="key-row">
+        <kbd>R</kbd>
+        <span class="color-dot" style="background:#dc1e1e"></span>
+        <span class="key-desc">빨간색</span>
+      </div>
+      <div class="key-row">
+        <kbd>G</kbd>
+        <span class="color-dot" style="background:#1eb41e"></span>
+        <span class="key-desc">초록색</span>
+      </div>
+      <div class="key-row">
+        <kbd>B</kbd>
+        <span class="color-dot" style="background:#1e1edc"></span>
+        <span class="key-desc">파란색</span>
+      </div>
+      <div class="key-row">
+        <kbd>D</kbd>
+        <span class="color-dot" style="background:#232d3f"></span>
+        <span class="key-desc">기본 (네이비)</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 표정 / 액세서리 -->
+    <div class="key-group">
+      <p class="key-group-label">표정 · 액세서리</p>
+      <div class="key-row">
+        <kbd>S</kbd>
+        <span class="key-desc">웃는 표정 ON/OFF</span>
+      </div>
+      <div class="key-row">
+        <kbd>H</kbd>
+        <span class="key-desc">모자 ON/OFF</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 배경 / 시간대 -->
+    <div class="key-group">
+      <p class="key-group-label">배경 시간대</p>
+      <div class="key-row">
+        <kbd>T</kbd>
+        <span class="key-desc">낮 → 저녁 → 밤<br>순으로 전환</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 베놈 -->
+    <div class="key-group">
+      <p class="key-group-label">특수 효과</p>
+      <div class="key-row">
+        <kbd>V</kbd>
+        <span class="key-desc">Venom 잠식 ON/OFF<br><span style="color:rgba(255,255,255,0.28);font-size:0.62rem">캐릭터가 점차 베놈에 잠식됨</span></span>
+      </div>
+      <div class="key-row">
+        <kbd>L</kbd>
+        <span class="key-desc">GIF 저장 (10초)</span>
+      </div>
+    </div>
+
+    <p class="panel-footer">
+      키를 누르면 즉시 반응합니다.<br>
+      Venom 모드 중 눈 클릭은<br>잠식도 30% 미만일 때만 동작합니다.
+    </p>
+  </aside>
+
   <script src="sketch.js"></script>
+
 </body>
 </html>
